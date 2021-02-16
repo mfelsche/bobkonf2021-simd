@@ -1,0 +1,1 @@
+CFLAGS=-march=native -O3

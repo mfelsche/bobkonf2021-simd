@@ -24,15 +24,24 @@
     <div class="line left"></div>
     <div class="line right"></div>
 
+
+
     <div class="reveal">
+        <!-- global stuff visible on every page-->
+        <p style="position: absolute; bottom: 25px;left: 50px"><a href="https://m7w3.de/simd">https://m7w3.de/simd</a>
+        </p>
+
+        <!-- slides content-->
         <div class="slides">
             <section>
 
                 <h1>SIMD in higher level languages</h1>
                 <p>Matthias Wahl - BobKonf 2021</p>
                 <p>&nbsp;</p>
-                <a href="https://m7w3.de/bobkonf/2021/simd">https://m7w3.de/bobkonf/2021/simd</a> <a
-                    href="https://github.com/mfelsche/bobkonf2021-simd">(sources)</a>
+                <p><a href="https://m7w3.de/simd">https://m7w3.de/simd</a></p>
+                <p><a
+                        href="https://github.com/mfelsche/bobkonf2021-simd">https://github.com/mfelsche/bobkonf2021-simd</a>
+                </p>
 
                 <p>
                     <a href="https://tremor.rs">
@@ -71,8 +80,8 @@
                 <h2>Agenda</h2>
 
                 <ol>
-                    <li>What's in your chip?</li>
-                    <li>How to get access?</li>
+                    <li>Intro</li>
+                    <li>What is in your chip and how to get access?</li>
                     <li>SIMD Programming 101</li>
                     <li>Array programming and SIMD: Julia</li>
                     <li>SIMD on the JVM</li>
@@ -81,30 +90,33 @@
             </section>
 
             <section>
-                <h1>What's in your chip?</h1>
+                <h1>Intro</h1>
             </section>
             <!-- DIE SHOTS -->
             <section data-background-image="images/amd-zen2-die-shot-small.jpg">
-                <p style="color: #fff; margin-top: 65%">AMD Epyc 7702 ES (Zen 2 | Rome | CCD)</p>
-                <p style="color: #fff">by <a
+                <p style="color: #fff; text-shadow: 1px 1px #000; margin-top: 65%">AMD Epyc 7702 ES (Zen 2 | Rome | CCD)
+                </p>
+                <p style="color: #fff; text-shadow: 1px 1px #000;">by <a
                         href="https://www.flickr.com/photos/130561288@N04/49045449908/in/photostream/"
-                        style="color: #fff; text-decoration: underline;">Fritzchens
+                        style="color: #fff; text-shadow: 1px 1px #000; text-decoration: underline;">Fritzchens
                         Fritz</a></p>
 
             </section>
             <section data-background-image="images/amd-zen2-die-shot-small-core0.jpg">
-                <p style="color: #fff; margin-top: 65%">AMD Epyc 7702 ES (Zen 2 | Rome | CCD)</p>
-                <p style="color: #fff">by <a
+                <p style="color: #fff; text-shadow: 1px 1px #000; margin-top: 65%">AMD Epyc 7702 ES (Zen 2 | Rome | CCD)
+                </p>
+                <p style="color: #fff; text-shadow: 1px 1px #000;">by <a
                         href="https://www.flickr.com/photos/130561288@N04/49045449908/in/photostream/"
-                        style="color: #fff; text-decoration: underline;">Fritzchens
+                        style="color: #fff; text-shadow: 1px 1px #000; text-decoration: underline;">Fritzchens
                         Fritz</a></p>
 
             </section>
             <section data-background-image="images/amd-zen2-die-shot-small-core0-left.jpg">
-                <p style="color: #fff; margin-top: 65%">AMD Epyc 7702 ES (Zen 2 | Rome | CCD)</p>
-                <p style="color: #fff">by <a
+                <p style="color: #fff; text-shadow: 1px 1px #000; margin-top: 65%">AMD Epyc 7702 ES (Zen 2 | Rome | CCD)
+                </p>
+                <p style="color: #fff; text-shadow: 1px 1px #000;">by <a
                         href="https://www.flickr.com/photos/130561288@N04/49045449908/in/photostream/"
-                        style="color: #fff; text-decoration: underline;">Fritzchens
+                        style="color: #fff; text-decoration: underline; text-shadow: 1px 1px #000;">Fritzchens
                         Fritz</a></p>
 
             </section>
@@ -112,7 +124,14 @@
                 data-background-size="contain">
             </section>
             <section>
-                <h2>What SIMD offers</h2>
+                <h2>What does it offer?</h2>
+                <section>
+                    <h2>SIMD</h2>
+
+                    <h3>Single Input - Multiple Data</h3>
+
+                    <p>Form of Data Parallelism</p>
+                </section>
                 <section>
                     <p>&nbsp;</p>
                     <img src="images/simd_register_lanes.svg" alt="simd register lanes" class="fragment"
@@ -123,18 +142,12 @@
                     <p class="fragment">128, 256, 512 bits</p>
                     <p class="fragment">interpreted as packed numeric types (signed, unsigned integers, floats,
                         doubles)</p>
-                </section>
-                <section>
-                    <ul>
-                        <li>Main memory &lt;-&gt; SIMD Register</li>
-                        <li class="fragment">data in contiguous arrays</li>
-                        <li class="fragment">data gathered from different places</li>
-                    </ul>
+                    <p class="fragment">huge set of instructions</p>
                 </section>
                 <section>
                     <img src="images/simd_add.svg" alt="simd add" />
                     <p>
-                        Lane-wise operations e.g. add 2 each lanes in 2 registers, logical-shift-left
+                        Lane-wise operations e.g. add each lane in 2 registers, logical-shift-left
                     </p>
                 </section>
                 <section>
@@ -142,7 +155,6 @@
                     <p>
                         horizontal operations, e.g. add together all lanes in a register
                     </p>
-
                 </section>
                 <section>
                     <img src="images/simd_masked.svg" alt="simd masked" />
@@ -161,16 +173,13 @@
                         Via instruction set extensions.
                     </p>
                     <p class="fragment">
-                        Compile for local CPU with `-march=native`
-                    </p>
-                    <p class="fragment">
-                        Portable code using SIMD needs to check CPU features at runtime.
+                        Not necessarily available on your CPU.
                     </p>
                 </section>
                 <section>
                     <h3>x86 (intel, AMD)</h3>
                     <ul>
-                        <li>MMX (Pentium 5, 1995)</li>
+                        <li>MMX (Pentium 5, 1997)</li>
                         <li>SSE</li>
                         <li>SSE2</li>
                         <li>SSE3</li>
@@ -230,14 +239,15 @@
                 <section>
                     <h3>Exercise for the reader</h3>
                     <p>&nbsp;</p>
-                    <p class="fragment highlight-current-blue">
+                    <p>
                         VPMOVZXBQ
                     </p>
                     <p>&nbsp;</p>
-                    <p class="fragment highlight-current-blue">
+                    <p>
                         VFMADD231SD
                     </p>
                 </section>
+                <!--
                 <section>
                     <h2>Assembly</h2>
                     <ul>
@@ -252,11 +262,14 @@
                         </li>
                     </ul>
                 </section>
+            -->
 
                 <section>
                     <h2>Auto Vectorization</h2>
 
-                    <pre><code data-trim data-noescape class="language-c">
+                    <p>Your compiler knows our CPU better than we do.</p>
+
+                    <pre class="fragment" data-fragment-index="1"><code data-trim data-noescape class="language-c">
 int32_t sum(int32_t* array, size_t len) {
     int32_t s = 0;
     for (size_t i = 0; i < len; i++) {
@@ -265,15 +278,15 @@ int32_t sum(int32_t* array, size_t len) {
     return s;
 }
 					</code></pre>
-                    <p>Simple sum of given array of ints</p>
-                    <a href="https://godbolt.org/z/7cMe47">On Godbolt</a>
+                    <p class="fragment" data-fragment-index="1">Simple sum of given array of ints</p>
+                    <a class="fragment" data-fragment-index="1" href="https://godbolt.org/z/7cMe47">On Godbolt</a>
                 </section>
                 <section>
                     <p>Small benchmark with len = 1000</p>
                     <table>
                         <thead>
-                            <th>-O0</th>
-                            <th>-O3</th>
+                            <th>no optimizations (-O0)</th>
+                            <th>auto-vectorization enabled (-O3)</th>
                         </thead>
                         <tbody>
                             <tr>
@@ -284,7 +297,7 @@ int32_t sum(int32_t* array, size_t len) {
                     </table>
                 </section>
                 <section>
-                    <pre><code data-trim data-noescape class="language-x86asm">
+                    <pre><code data-trim data-noescape class="language-x86asm" data-line-numbers="1-19|5">
 .L4:
 	vmovdqu (%rax), %xmm2
 	vinserti128 $0x1, 16(%rax), %ymm2, %ymm0
@@ -311,7 +324,7 @@ int32_t sum(int32_t* array, size_t len) {
 
 
             <section>
-                <h2>C instrinsics</h2>
+                <h2>C intrinsics</h2>
                 <pre style="font-size: 0.5em"><code data-trim data-noescape data-line-numbers="1-17|1|5-7|9-12|15-17|"><script type="text/template">
 
                   #include <immintrin.h>  // x86
@@ -337,14 +350,14 @@ int32_t sum(int32_t* array, size_t len) {
             </section>
             <section>
 
-                <h2>C instrinsics</h2>
+                <h2>C intrinsics</h2>
                 <ul>
                     <li>offered by every platform</li>
                     <li>compilers ship platform specific headers</li>
                 </ul>
             </section>
             <section>
-                <h2>C instrinsics</h2>
+                <h2>C intrinsics</h2>
                 <ul>
                     <li>
                         Full control
@@ -403,37 +416,23 @@ int32_t sum(int32_t* array, size_t len) {
                 </section>
 
                 <section>
-                    <pre><code data-trim data-noescape data-line-numbers="1-10|1|3-4|6"><script type="text/template">
-#include <immintrin.h>
-
-#if defined(__AVX2__)
+                    <pre><code data-trim data-noescape data-line-numbers="|5-12|14-19" class="language-c"><script type="text/template">
 static size_t VECTOR_SIZE = sizeof(__m256i);
 
 void* memchr_avx2(const uint8_t* haystack, uint8_t needle, size_t hlen) {
-    // ...
-}
-#endif
-					</script></code></pre>
-                    <p>x86_64 AVX2</p>
-                </section>
-
-
-                <section>
-                    <pre><code data-trim data-noescape data-line-numbers="1-17|2|4-11|12-15" class="language-c"><script type="text/template">
-size_t memchr_avx2(const uint8_t* haystack, uint8_t needle, size_t hlen) {
-    __m256i  vneedle  = _mm256_set1_epi8(needle);
 
     size_t idx = 0;
     if (hlen > VECTOR_SIZE) {
         // SIMD LOOP
         while (idx < (hlen - VECTOR_SIZE)) {
-            // ...
+            // ... DO THE MAGIC
             idx += VECTOR_SIZE;
         }
     }
+
     // SCALAR TAIL
     for (; idx < hlen; idx++) {
-        // ...
+        // ... SCALAR FALLBACK FOR THE REST
     }
     return NULL;
 }
@@ -442,7 +441,7 @@ size_t memchr_avx2(const uint8_t* haystack, uint8_t needle, size_t hlen) {
                     <p>x86_64 AVX2</p>
                 </section>
                 <section>
-                    <pre><code data-trim data-noescape data-line-numbers="1-16|2-3|5-6|8-12" class="language-c"><script type="text/template">
+                    <pre><code data-trim data-noescape data-line-numbers class="language-c"><script type="text/template">
 while (idx < (hlen - VECTOR_SIZE)) {
     // LOAD DATA FROM MEMORY INTO SIMD REGISTER
     __m256i chunk = _mm256_loadu_si256((const __m256i*)(haystack + idx));
@@ -459,7 +458,7 @@ while (idx < (hlen - VECTOR_SIZE)) {
 }
 </script></code></pre>
 
-                    <p>x86_64 AVX2</p>
+                    <p>x86_64 AVX2 - SIMD Loop</p>
                 </section>
                 <section>
                     <pre><code data-trim data-noescape class="language-c"><script type="text/template">
@@ -471,7 +470,7 @@ for (; idx < hlen; idx++) {
 }
 </script></code></pre>
 
-                    <p>x86_64 AVX2</p>
+                    <p>x86_64 AVX2 - SIMD Loop</p>
                 </section>
 
                 <section>
@@ -488,9 +487,6 @@ for (; idx < hlen; idx++) {
                         </li>
                         <li class="fragment">
                             auto-detects available features on host CPU
-                        </li>
-                        <li class="fragment">
-                            simple adaption to different platforms
                         </li>
                         <li class="fragment">
                             Intuitive interaction with language type-system
@@ -521,6 +517,9 @@ for (; idx < hlen; idx++) {
                 </section>
                 <section>
                     <h2>Array Programming</h2>
+                    <p class="fragment">
+                        convenient syntax to broadcast functions onto array/matrix elements
+                    </p>
                     <pre class="fragment"><code data-trim data-noescape class="language-julia"><script type="text/template">
 julia> broadcast(+, [1, 2, 3], 1)
 3-element Array{Int64,1}:
@@ -528,22 +527,18 @@ julia> broadcast(+, [1, 2, 3], 1)
  3
  4
 					</script></code></pre>
-                    <p class="fragment">
-                        convenient syntax to broadcast functions onto array/matrix elements
-                    </p>
+
                     <p class="fragment">
                         compiler can freely vectorize
                     </p>
                 </section>
                 <section>
                     <p>&nbsp;</p>
-                    <pre><code data-trim data-noescape data-line-numbers="2|3" class="language-julia"><script type="text/template">
+                    <pre><code data-trim data-noescape class="language-julia"><script type="text/template">
 							julia -O3
-							julia> s = cat(Vector{UInt8}(repeat(b"a", 1000)), b"b", dims=1)
-							julia> broadcast(+, s, 1)
+							julia> @code_native broadcast(+, Vector(1:100), 1)
 					</script></code></pre>
-                    <div class="fragment">
-                        <pre><code data-trim data-noescape data-line-numbers="1-4|5-8|9-12"><script type="text/template">
+                    <pre><code data-trim data-noescape data-line-numbers="1-4|5-8|9-12"><script type="text/template">
 								vpmovzxbq       (%rax,%rsi), %ymm1 ## ymm1 = mem[0],zero,zero,zero,zero,zero,zero,zero,mem[1],zero,zero,zero,zero,zero,zero,zero,mem[2],zero,zero,zero,zero,zero,zero,zero,mem[3],zero,zero,zero,zero,zero,zero,zero
 								vpmovzxbq       4(%rax,%rsi), %ymm2 ## ymm2 = mem[0],zero,zero,zero,zero,zero,zero,zero,mem[1],zero,zero,zero,zero,zero,zero,zero,mem[2],zero,zero,zero,zero,zero,zero,zero,mem[3],zero,zero,zero,zero,zero,zero,zero
 								vpmovzxbq       8(%rax,%rsi), %ymm3 ## ymm3 = mem[0],zero,zero,zero,zero,zero,zero,zero,mem[1],zero,zero,zero,zero,zero,zero,zero,mem[2],zero,zero,zero,zero,zero,zero,zero,mem[3],zero,zero,zero,zero,zero,zero,zero
@@ -557,7 +552,6 @@ julia> broadcast(+, [1, 2, 3], 1)
 								vmovdqu %ymm3, 64(%rcx,%rsi,8)
 								vmovdqu %ymm4, 96(%rcx,%rsi,8)
 						</script></code></pre>
-                    </div>
                 </section>
                 <section>
                     <h2>SIMD in Julia</h2>
@@ -595,6 +589,7 @@ julia> broadcast(+, [1, 2, 3], 1)
 						</code></pre>
                 </section>
                 <section>
+                    <h2>SIMD.jl</h2>
                     <p><a href="">https://github.com/eschnett/SIMD.jl</a></p>
                     <p>&nbsp;</p>
                     <p>Some more convenience</p>
@@ -602,7 +597,7 @@ julia> broadcast(+, [1, 2, 3], 1)
                 <section>
                     <h2>SIMD findfirst</h2>
 
-                    <pre><code data-trim data-noescape style="font-size: 70%;"><script type="text/template">
+                    <pre><code data-trim data-noescape style="font-size: 70%;" data-line-numbers="|6-8,10"><script type="text/template">
 using SIMD
 function find_first_simd(needle::UInt8, haystack::Array{UInt8})
     l = length(haystack)
@@ -642,10 +637,10 @@ end
                             Array programming FTW for vectorization
                         </li>
                         <li class="fragment">
-                            Horrible raw SIMD interface in stdlib
+                            Very raw SIMD interface in stdlib
                         </li>
                         <li class="fragment">
-                            Portable SIMD code with SIMD.jl
+                            Ergonomic SIMD code with SIMD.jl
                         </li>
                         <li class="fragment">
                             Good interaction with Arrays load/store, gather/scatter
@@ -678,8 +673,8 @@ end
                         Parameterized on lane type
                     </p>
                     <p class="fragment">and register size</p>
-                    <pre style="width: 100%"><code data-trim data-noescape class="fragment language-java"><script type="text/template">
-						var allOnes = ByteVector.broadcast(ByteVector.SPECIES_PREFERRED, (byte)0xFF);
+                    <pre style="width: 100%" class="fragment"><code data-trim data-noescape class="language-java"><script type="text/template">
+						var allOnes = ByteVector.broadcast(ByteVector.SPECIES_256, (byte)0xFF);
 					</script></code></pre>
                 </section>
                 <section>
@@ -697,7 +692,7 @@ end
                     <p>Fallback scalar methods in plain java</p>
                 </section>
                 <section>
-                    <pre style="width: 100%"><code data-trim data-noescape class="language-java" data-line-numbers="1-20|2|5-6|12|13|14-19|24"><script type="text/template">
+                    <pre style="width: 100%"><code data-trim data-noescape class="language-java" data-line-numbers="1-20|2|5-6|11-12|14-17"><script type="text/template">
 
 class Memchr {
     public static VectorSpecies<Byte> species = ByteVector.SPECIES_PREFERRED;
@@ -717,16 +712,10 @@ class Memchr {
                 return idx + firstTrue;
             }
         }
-        // tail
-        if (idx < haystack.length) {
-            // reset index to end - vector-size to handle tail with 1 iteration
-            idx = haystack.length - species.length();
-            var vec = ByteVector.fromArray(species, haystack, idx);
-            var mask = vec.compare(VectorOperators.EQ, needleVec);
-
-            var firstTrue = mask.firstTrue();
-            if (firstTrue < species.length()) {
-                return idx + firstTrue;
+        // scalar tail
+        for (; idx < haystack.length; idx++) {
+            if (haystack[idx] == needle) {
+                return idx;
             }
         }
         return -1;
@@ -738,7 +727,7 @@ class Memchr {
                 <section>
                     <p>Hard to beat auto-vectorized scalar version:</p>
                     <p>&nbsp;</p>
-                    <pre class="fragment"><code data-trim data-noescape class="language-java"><script type="text/template">
+                    <pre><code data-trim data-noescape class="language-java"><script type="text/template">
 						for (int i= 0: i < haystack.length; i++) {
 						    if (haystack[i] == needle) {
 						        return i;
@@ -754,7 +743,7 @@ class Memchr {
                 <section>
                     <h2>Java: judgment day</h2>
                     <ul>
-                        <li class="fragment">Thoughtful API</li>
+                        <li class="fragment">Thoughtful and rich API</li>
                         <li class="fragment">Portable SIMD programming</li>
                         <li class="fragment">Immensely powerful -> JVM ecosystem</li>
                         <li class="fragment">A bit unpredictable performance</li>
@@ -768,6 +757,7 @@ class Memchr {
                 <section>
                     <h1><span class="fragment">Parsing JSON in </span>Rust</h1>
                 </section>
+                <!--
                 <section>
                     <ul>
                         <li class="fragment">
@@ -798,26 +788,33 @@ class Memchr {
                         </li>
                     </ul>
                 </section>
+            -->
                 <section>
+                    <h2 style="text-transform: none;">core::arch</h2>
                     <ul>
                         <li>
                             Access to RAW vendor specific intrinsics
                         </li>
-                        <li>
-                            Possibility to compile portable binaries with optimizations for target_features.
+                        <li class="fragment">Exposes C instrinsics</li>
+                        <li class="fragment">
+                            runtime checks for supported features
+                            <pre class="fragment"><code data-trim data-noescape>
+        if is_x86_feature_detected!("avx2") {
+            unsafe { foo_avx2() };
+        }
+                            </code></pre>
                         </li>
-                        <li>
-                            Even in
-                            <code>no_std</code> environments.
+                        <li class="fragment">
+                            Possibility to compile portable binaries with optimizations for different target_features
                         </li>
-
                     </ul>
                 </section>
 
                 <section>
                     <h2>SIMD-json</h2>
                     <p>&nbsp;</p>
-                    <p><a href="https://github.com/simd-lite/simd-json">https://github.com/simd-lite/simd-json</a></p>
+                    <p><a href="https://github.com/simd-lite/simd-json">https://github.com/simd-lite/simd-json</a>
+                    </p>
                     <p>Port of lemires C++ SIMD-json project</p>
                     <p>In heavy use at Tremor</p>
                 </section>
@@ -848,11 +845,13 @@ class Memchr {
                         <li class="fragment">Multiple passes over the byte stream</li>
                         <ul>
                             <li class="fragment">
-                                verify UTF8, detect structural characters
-                                <code>{, }, ", ", comma</code>
+                                <b>Pass 1: </b>detect structural characters: <br />
+                                <code>{ } : " , whitespace</code>
                             </li>
                             <li class="fragment">
-                                build "tape" of tokens, build struct, map, array etc from that.
+                                <b>Pass 2:</b>
+                                Iterate over structurals, build "tape" of tokens, build struct, map, array etc from
+                                that.
                             </li>
                         </ul>
                     </ul>
@@ -913,8 +912,11 @@ let tmp_ws_v3: uint8x16_t = vtstq_u8(v_3, whitespace_shufti_mask);
                         according to <a href="https://github.com/serde-rs/json-benchmark">serde-rs/json-benchmark</a>
                     </p>
                 </section>
+                <!--
                 <section>
                     <h2>stdsimd</h2>
+                    <a href="https://github.com/rust-lang/stdsimd">https://github.com/rust-lang/stdsimd</a>
+                    <p>&nbsp;</p>
                     <p>effort to provide portable SIMD interface</p>
                     <p>Based on LLVM vectors</p>
                     <p>const size array as runtime representation</p>
@@ -923,7 +925,8 @@ let tmp_ws_v3: uint8x16_t = vtstq_u8(v_3, whitespace_shufti_mask);
                     <h2>Faster</h2>
                     <ul>
                         <li>SIMD iterator</li>
-                        <li>express explicit SIMD operations by specifying SIMD loop operation in a declarative fashion
+                        <li>express explicit SIMD operations by specifying SIMD loop operation in a declarative
+                            fashion
                         </li>
                         <li>scalar fallback for tail loop included</li>
                     </ul>
@@ -938,56 +941,58 @@ let lots_of_3s = (&[-123.456f32; 128][..]).simd_iter()
 </script></code></pre>
                 </section>
             </section>
-            <section>
+        -->
                 <section>
-                    <h2>Wrapping up</h2>
-                    <ul>
-                        <li class="fragment">Support for explicit SIMD programming more and more widespread</li>
-                        <li class="fragment">C, C++, Java, Rust, Julia, Zig, Swift, wasm</li>
-                        <li class="fragment">Portable</li>
-                        <li class="fragment">Ergonomic</li>
-                        <li class="fragment">Still a tricky endeavour to achieve theoretically possible speedups</li>
-                    </ul>
-                </section>
-                <section>
-                    <h2>Wrapping up</h2>
-                    <ul>
-                        <li class="fragment">
-                            Performance optimization hard
-                        </li>
-                        <li class="fragment">
-                            ... requires extensive testing and benchmarking
-                        </li>
-                        <li class="fragment">
-                            ... initial hunch is often incorrect
-                        </li>
-                        <li class="fragment">
-                            ... simple porting of scalar algorithms does not work
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <h2>But...</h2>
-                    <ul>
-                        <li style="font-size: 2em" class="fragment">
-                            It's fun!
-                        </li>
-                        <li style="font-size: 2em" class="fragment">
-                            It's beneficial!
-                        </li>
-                    </ul>
-                    <div class="r-stack">
+                    <section>
+                        <h2>Wrapping up</h2>
+                        <ul>
+                            <li class="fragment">Support for explicit SIMD programming more and more widespread</li>
+                            <li class="fragment">C, C++, Java, Rust, Julia, Zig, Swift, wasm</li>
+                            <li class="fragment">Portable</li>
+                            <li class="fragment">Ergonomic</li>
+                            <li class="fragment">Still a tricky endeavour to achieve theoretically possible speedups
+                            </li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Wrapping up</h2>
+                        <ul>
+                            <li class="fragment">
+                                Performance optimization hard
+                            </li>
+                            <li class="fragment">
+                                ... requires extensive testing and benchmarking
+                            </li>
+                            <li class="fragment">
+                                ... initial hunch is often incorrect
+                            </li>
+                            <li class="fragment">
+                                ... simple porting of scalar algorithms does not work
+                            </li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>But...</h2>
+                        <ul>
+                            <li style="font-size: 2em" class="fragment">
+                                It's fun!
+                            </li>
+                            <li style="font-size: 2em" class="fragment">
+                                It's beneficial!
+                            </li>
+                        </ul>
+                        <div class="r-stack">
 
-                        <p style="font-size: 2em" class="fragment current-visible">You can show off!</p>
-                        <img class="fragment" src="images/they_dont_know.jpg" alt="they dont know cvttpd2dq"
-                            height="80%" />
-                    </div>
+                            <p style="font-size: 2em" class="fragment current-visible">You can show off!</p>
+                            <img class="fragment" src="images/they_dont_know.jpg" alt="they dont know cvttpd2dq"
+                                height="80%" />
+                        </div>
 
+                    </section>
+                    <section>
+                        <h1>Q & A</h1>
+                    </section>
                 </section>
-                <section>
-                    <h1>Q & A</h1>
-                </section>
-            </section>
         </div>
     </div>
 

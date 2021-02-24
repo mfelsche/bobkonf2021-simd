@@ -52,14 +52,6 @@
 
             <section>
                 <section>
-                    <h2>Disclaimer</h2>
-                    <p>&nbsp;</p>
-                    <p class="fragment"><b>No SIMD expert.</b></p>
-                    <p>&nbsp;</p>
-                    <p class="fragment">Just curious.</p>
-                </section>
-
-                <section>
                     <h2>About me</h2>
                     <p>Systems engineer at Wayfair</p>
                     <p class="fragment" data-fragment-index="2">Working on <a href="https://tremor.rs">Tremor</a>, doing
@@ -267,7 +259,7 @@
                 <section>
                     <h2>Auto Vectorization</h2>
 
-                    <p>Your compiler knows our CPU better than we do.</p>
+                    <p>Our compiler knows our CPU better than we do.</p>
 
                     <pre class="fragment" data-fragment-index="1"><code data-trim data-noescape class="language-c">
 int32_t sum(int32_t* array, size_t len) {
@@ -904,6 +896,24 @@ let tmp_ws_v3: uint8x16_t = vtstq_u8(v_3, whitespace_shufti_mask);
 *whitespace = neon_movemask_bulk(tmp_ws_v0, tmp_ws_v1, tmp_ws_v2, tmp_ws_v3);
 					</script></code></pre>
                     <p>structural character detection algorithm "shufti" (ARM NEON)</p>
+                </section>
+                <section>
+                    <h2>SIMD character classification</h2>
+                    <p>
+                    <pre style="font-size: 0.9em;"><code data-trim data-noescape class="language-python">
+        '}' = 0x7d
+                / \
+    nibbles:   7   13
+
+    # table lookup using nibbles as lookup index
+    high_niblle_table[7] = 0x01
+    low_nibble_table[13] = 0x09
+
+    # character class
+    (0x01 & 0x09) & mask = 0x01
+                    </code></pre>
+                    </p>
+                    <p class="fragment"> ~ 12 instructions for creating bitmask from 16 characters</p>
                 </section>
                 <section>
                     <p>Up to 2x faster than Rust serde_json</p>
